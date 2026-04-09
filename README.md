@@ -1,192 +1,121 @@
-# KMS
+# Agentic Business Analytics
 
-KMS is a governed Knowledge Management System for turning immutable raw source material into finalized markdown knowledge under Knowledge Manager control.
+Agentic Business Analytics (ABA) is a controlled, enterprise-grade analytics execution system. It is designed to turn ambiguous business problems into structured, evidence-backed analytical outcomes through governed orchestration, bounded reasoning, safe execution, and traceable validation.
 
-The product publishes its finalized knowledge to `/wiki` and exposes that knowledge through a separate read-only navigation layer.
+## What ABA Is
 
-## At a Glance
+ABA is not a chatbot and not a prompt-only workflow. It is a stage-driven agentic system for business analytics end to end. The system is built to support exploratory analysis, branching hypotheses, repeatable runs, and machine-readable outputs while keeping reasoning, control, execution, validation, and observability distinct.
 
-- Governed knowledge maintenance, not ad hoc note taking
-- Finalized markdown as the unit of truth
-- Controlled publication through the Knowledge Manager Interface
-- Read-only consumption through Infopedia
-- Stable knowledge for humans and downstream AI systems
+## Key Capabilities
 
-## Why KMS Exists
+- Stage-driven analytics lifecycle from problem framing to insight
+- Multi-hypothesis exploration, ranking, pruning, and branching
+- Structured intake of ambiguous and evolving business problems
+- Governed execution for SQL, Python, and SAS
+- Evidence-backed insights and recommendations
+- Replayable, auditable, and traceable run history
+- Controlled human intervention at approval checkpoints
 
-KMS exists to preserve institutional knowledge in a durable, structured, and reviewable form.
-It is designed for teams that need trusted knowledge for analytics, reporting, operational decisions, and AI-assisted work.
+## System Architecture
 
-The product focuses on:
+ABA is organized as a layered control plane:
 
-- turning scattered source material into curated markdown knowledge
-- keeping truth controlled through a governed maintenance workflow
-- separating knowledge maintenance from knowledge consumption
-- providing stable knowledge for humans and downstream AI systems
+- Orchestration handles stage transitions, branching, retries, checkpoints, and convergence
+- Agents reason over the problem, context, hypotheses, plans, execution results, and insights
+- Context and memory keep each run stage-aware, minimal, versioned, and reusable where appropriate
+- Execution runs analytical work through sandboxed tool paths
+- Validation and governance enforce policy, confidence, and stage readiness
+- Observability and traceability capture logs, lineage, decisions, and replay data
 
-## Core Product Surfaces
+## Core Components
 
-KMS provides three product surfaces:
+### Orchestration
 
-### 1. Knowledge Manager Interface
+LangGraph is the control brain for ABA. It owns the canonical run state and directs progression through the analytics lifecycle. The orchestrator controls transitions, retries, loops, rollback, escalation, and human-in-the-loop pauses.
 
-The Knowledge Manager Interface, or KMI, is the governed maintenance surface. It is used to:
+### Agents
 
-- start a knowledge maintenance run from a local source path
-- inspect discovered sources and parsed content
-- review proposed changes, diffs, contradictions, and rule violations
-- approve, reject, defer, or escalate updates
-- publish finalized knowledge to `/wiki`
+ABA uses modular reasoning agents with bounded responsibilities and strict input/output contracts. Core agents cover problem structuring, business context, data context, context curation, hypothesis generation, hypothesis prioritization, analysis planning, code generation, code review, execution interpretation, pattern or driver analysis, insight generation, recommendation, critic behavior, and insight validation.
 
-KMI is the only sanctioned path for controlled knowledge publication.
+### Context and Memory
 
-### 2. Wiki Layer
+The context system assembles a curated, stage-aware context pack for each run. It includes business context, data context, prior outputs, reusable memory, and versioned artifacts while preventing context overload and preserving traceability.
 
-The Wiki Layer is the finalized knowledge store. It contains the authoritative markdown pages that represent current truth.
+### Execution
 
-The wiki layer is:
+The execution layer provides governed access to SQL, Python, and SAS. It accepts structured requests, runs them in sandboxed conditions, and returns normalized results with metadata, logs, and artifacts.
 
-- human-readable
-- structured for reuse by AI systems
-- stable across maintenance cycles
-- protected from uncontrolled edits outside the governed workflow
+## How the System Works
 
-### 3. Infopedia
+1. The user submits a structured business problem and supporting context.
+2. ABA normalizes the intake and builds the initial problem frame.
+3. Context is assembled and curated for the current stage.
+4. The system generates and prioritizes multiple hypotheses where needed.
+5. A governed analysis plan is produced and validated.
+6. Approved work is executed through sandboxed tools.
+7. Results are interpreted, validated, and converted into insights.
+8. The system produces recommendations, with human approval required where policy demands it.
 
-Infopedia is the read-only knowledge browsing layer. It helps people explore finalized knowledge through:
+Throughout the run, the orchestrator governs stage progression, validation, retries, loop-backs, and escalation. Agents provide reasoning; they do not control flow or execute tools directly.
 
-- tree-based navigation
-- hyperlink traversal
-- search and browse flows
-- page-level reading and discovery
+## Governance and Validation
 
-Infopedia never edits truth. It only presents finalized wiki content.
+ABA validates every major stage before progression. Governance checkpoints enforce input quality, hypothesis quality, plan feasibility, execution safety, result integrity, and insight evidence sufficiency. Failed validation blocks progression, triggers revision, or escalates for human intervention.
 
-## How KMS Works
+Governance also enforces:
 
-1. Raw source material is placed in a local source folder.
-2. KMI starts a maintenance run against that source path.
-3. KMS discovers, parses, and analyzes the source material.
-4. KMS proposes updates, identifies contradictions, and applies validation rules.
-5. The Knowledge Manager reviews the evidence and makes the publish decision.
-6. Approved content is published to `/wiki` as finalized markdown.
-7. Infopedia presents the finalized knowledge in a read-only browse experience.
+- explicit stage entry and exit conditions
+- confidence and contradiction handling
+- policy-based control rules
+- human approval checkpoints
+- audit-ready decision logging
 
-## Core Functionality
+## Observability and Traceability
 
-### Source intake
+ABA records structured run traces, agent inputs and outputs, stage transitions, retries, failures, checkpoints, and decision rationale. Every significant output links back to its upstream context, hypothesis, plan, execution artifacts, and evidence so runs can be replayed, inspected, and audited.
 
-KMS accepts local source folders as immutable upstream inputs.
-Those sources may include documents, exports, notes, reports, and extracts.
+## User Experience Overview
 
-### Knowledge maintenance
+ABA presents a structured analyst workspace, not a chat interface. The workspace makes stage progression visible, shows what the system is doing, exposes active context and evidence, and surfaces approval, override, and revision points when human action is required.
 
-KMS analyzes source material, compares it with existing knowledge, identifies contradictions or gaps, and prepares proposed updates.
+Users can:
 
-### Governance and review
+- refine the problem statement
+- review and adjust context
+- inspect and select hypotheses
+- approve or override plans
+- inspect execution outputs and artifacts
+- validate insights before finalization
 
-KMS applies validation rules before publish.
-The Knowledge Manager can inspect evidence, review diffs, resolve contradictions, and make final decisions.
+## Acceptance and Quality Principles
 
-### Finalization
+ABA is designed to be:
 
-Approved content is written to `/wiki` as finalized markdown knowledge.
-That content becomes the governed source of truth for the product.
+- repeatable across equivalent runs
+- structured and machine-readable at every boundary
+- traceable from problem to insight
+- governed by validation and policy checkpoints
+- safe to fail with actionable reasons
+- testable end to end on representative analytics scenarios
 
-### Read-only consumption
-
-Infopedia and downstream AI systems consume finalized knowledge without changing it.
-
-## Roles
-
-### Knowledge Manager
-The Knowledge Manager owns maintenance runs and decides what becomes finalized knowledge. This role reviews evidence, handles conflicts, and approves publication.
-
-### Knowledge Consumer
-
-Knowledge Consumers read and navigate finalized knowledge in Infopedia. They do not modify published truth.
-
-### Downstream AI System
-
-Downstream AI systems use finalized markdown as governed context for assistance, planning, validation, and execution support.
-
-## How to Use KMS
-
-### For Knowledge Managers
-
-1. Place the source material you want to maintain in a local source folder.
-2. Open KMI and start a maintenance run from that source path.
-3. Review the discovered files, proposed changes, diffs, and validation results.
-4. Inspect contradictions, missing trace, freshness issues, and other rule violations.
-5. Approve the changes that are ready for publication.
-6. Reject, defer, or escalate items that need more work.
-7. Publish the approved updates to `/wiki`.
-8. Use the run record and validation output to confirm what changed.
-
-### For Knowledge Consumers
-
-1. Open Infopedia.
-2. Browse the knowledge tree or search for a topic.
-3. Follow links between related pages.
-4. Read the finalized markdown content.
-5. Use the knowledge as the trusted reference source for your work.
-
-### For AI-assisted workflows
-
-1. Use the finalized markdown in `/wiki` as the governed context.
-2. Avoid using raw source material as final truth.
-3. Ground prompts, drafting, and validation in the published knowledge set.
-4. Keep maintenance decisions in KMI, not in the consumption layer.
-
-## Operating Principles
-
-- Curated knowledge over raw retrieval
-- Determinism over improvisation
-- One source of truth in `/wiki`
-- Separation of maintenance and consumption
-- Governance-first publication
-- Structured markdown over free-form sprawl
-- Human control over finalization
-- Extensibility toward future agentic AI use
-
-## Repository Map
-
-This repository contains the product contract, design, implementation, and validation layers that support KMS development.
-
-- [`intent/`](./intent/) holds product intent and feedback inputs
-- [`plan/`](./plan/) holds the current iteration workspace
-- [`design/`](./design/) holds the detailed design artifacts
-- [`src/`](./src/) holds implementation code and product documentation
-- [`tests/`](./tests/) holds validation assets and test plans
-- [`dev_log/`](./dev_log/) holds the permanent execution record
-- [`dev_workflow/`](./dev_workflow/) holds the workflow prompts and runbooks
-- [`skills/`](./skills/) holds reusable scoped procedures
-- [`.github/`](./.github/) holds local working context and command references
+Quality is judged by accuracy, depth, relevance, evidence coverage, consistency, and actionability. Outputs must remain supported by traceable evidence and governed by the run state, not by opaque model behavior.
 
 ## Getting Started
 
-If you are new to KMS, start here:
+1. Read the product intent in [intent/product-intent.md](./intent/product-intent.md).
+2. Review the high-level operating context in [.github/copilot-instructions.md](./.github/copilot-instructions.md).
+3. Read the detailed design in [design/system-design.md](./design/system-design.md), [design/architecture.md](./design/architecture.md), [design/ux-flows.md](./design/ux-flows.md), and [design/acceptance-criteria.md](./design/acceptance-criteria.md).
+4. Check the current iteration plans in [plan/design-update.md](./plan/design-update.md), [plan/code-update.md](./plan/code-update.md), and [plan/test-update.md](./plan/test-update.md).
+5. Use the workflow prompts in [dev_workflow/](./dev_workflow/) when updating the system.
 
-1. Read the current product intent in [`intent/product-intent.md`](./intent/product-intent.md).
-2. Review the high-level product context in [`.github/copilot-instructions.md`](./.github/copilot-instructions.md).
-3. Read the detailed design files in [`design/system-design.md`](./design/system-design.md), [`design/architecture.md`](./design/architecture.md), [`design/ux-flows.md`](./design/ux-flows.md), and [`design/acceptance-criteria.md`](./design/acceptance-criteria.md).
-4. Review the current plan files in [`plan/design-update.md`](./plan/design-update.md), [`plan/code-update.md`](./plan/code-update.md), and [`plan/test-update.md`](./plan/test-update.md) if you are changing behavior.
-5. Use the workflow prompts in [`dev_workflow/`](./dev_workflow/) when updating the product.
-6. Use [`src/docs/`](./src/docs/) for implementation-level guidance when code exists.
+## Repository Map
 
-## Notes For Contributors
-
-- KMS is not a generic document store.
-- KMS is not a chat interface.
-- KMS is not a raw search engine.
-- KMS is a governed knowledge control plane built around finalized markdown knowledge.
-
-## Product Boundaries
-
-KMS is intentionally focused on governed knowledge maintenance and consumption.
-
-- It is not a source connector platform.
-- It is not a free-form editing surface for consumers.
-- It is not a chatbot product.
-- It is not a generic enterprise search engine.
-- It is not an uncontrolled autonomous system.
+- [intent/](./intent/) contains product intent and feedback inputs
+- [plan/](./plan/) contains the current iteration workspace
+- [design/](./design/) contains the detailed design artifacts
+- [src/](./src/) contains implementation code and application documentation
+- [tests/](./tests/) contains validation assets and test plans
+- [dev_log/](./dev_log/) contains the permanent execution record
+- [dev_workflow/](./dev_workflow/) contains workflow prompts and runbooks
+- [skills/](./skills/) contains reusable scoped procedures
+- [.github/](./.github/) contains local context and command references

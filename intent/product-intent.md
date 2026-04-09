@@ -17,7 +17,7 @@
 
 11. Define LangGraph-based orchestration as core execution model
 12. Represent full analytics lifecycle as graph of nodes and transitions
-13. Define stage-wise nodes (problem → context → hypothesis → plan → execution → insight)
+13. Define stage-wise nodes (intake → context → hypothesis → plan → execution → insight)
 14. Establish explicit entry/exit conditions for each stage
 15. Define shared state structure across all nodes
 16. Enable branching workflows based on hypothesis exploration
@@ -28,7 +28,7 @@
 
 ## 3. AGENT DESIGN
 
-21. Define Problem Structuring Agent with clear input/output schema
+21. Define Intake Structuring Agent with clear input/output schema
 22. Define Business Context Agent responsibilities and boundaries
 23. Define Data Context Agent for dataset understanding
 24. Define Context Curation Agent for assembling working context
@@ -98,7 +98,7 @@
 76. Define debugging views for failed runs
 77. Capture performance and latency metrics
 78. Track retry and failure patterns
-79. Enable lineage from problem to insight
+79. Enable lineage from intake to insight
 80. Ensure observability is structured and queryable
 
 ## 8. UI / ANALYST EXPERIENCE

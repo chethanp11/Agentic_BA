@@ -1,83 +1,73 @@
-# copilot Project Context
+# ABA Copilot Context
 
-Compact high-level design context for this repository. `AGENTS.md` is the authoritative contract; this file is the primary design summary above `design/*`.
+High-level design context for Agentic Business Analytics (ABA). `intent/product-intent.md` is the source of truth. This file summarizes the operating model for `design/*`, `src/*`, and `tests/*`.
 
-## Role
-- Use this file to orient quickly before work.
-- Keep it in sync with `AGENTS.md` for active repo shape, high-level design, and task-start guidance.
-- Do not repeat the full policy text from `AGENTS.md`.
-- Always read this file and `AGENTS.md` before starting any task.
-- Treat this file as the compact high-level design summary, not the full contract.
-- Folder-by-folder acceptability rules live in `AGENTS.md`; this file keeps the operating model and current design map.
-- The numbered folder contracts in `AGENTS.md` define what belongs where, how files are created, and what is not allowed.
+## System Purpose
 
-## Current repo shape
-1. `intent/` is the starting point of requirements and contains `product-intent.md`, `feedback.md`, and `gaps.md`.
-2. `plan/` is the temporary iteration workspace and contains `design-update.md`, `code-update.md`, and `test-update.md`.
-3. `design/` is the detailed design layer and contains `system-design.md`, `architecture.md`, `ux-flows.md`, and `acceptance-criteria.md`.
-4. `src/` is the implementation layer and contains application code, `README.md`, and `src/docs/`.
-5. `tests/` is the validation layer and contains traceability, test plans, and test assets.
-6. `dev_log/` is the permanent archive and contains `design-update-log.md`, `code-update-log.md`, `test-update-log.md`, and `validation-results.md`.
-7. `dev_workflow/` contains the prompts that update design, code, tests, and logs in order.
-8. `skills/` is used only when the task matches a skill’s scope.
-9. `.github/` holds local context, command references, and the local implementation stack note in `.github/tech-stack.md`.
-10. Source of truth order: `intent/*` -> `plan/*` -> `.github/copilot-instructions.md` -> `design/*` -> `tests/*` -> `src/*`.
-11. Plan entries and log entries use prefix IDs; design, `src/`, and `tests/` stay human-readable and do not use prefix IDs as primary numbering.
+ABA is a controlled agentic system for end-to-end business analytics. It is an analytics execution system, not a chatbot or prompt-only workflow. The system turns ambiguous business problems into structured analytical outcomes through stage-driven orchestration, bounded reasoning, governed execution, and traceable validation.
 
-## `intent/`
-1. Read first; do not edit unless explicitly asked.
-2. `product-intent.md` and `feedback.md` are the only human-edited operational inputs.
-3. `gaps.md` is system-edited from validation and `dev_log/*`.
-4. Preserve full detail when translating to `plan/`.
+## Core Architecture Principles
 
-## `plan/`
-1. Keep scope explicit, carry open questions forward, and split work into design, code, and test updates.
-2. Number plan entries with prefix IDs so the current iteration is traceable.
+- Separate reasoning, control, execution, context, validation, and observability responsibilities.
+- Model every run as a graph of explicit stages and transitions.
+- Keep all outputs structured and machine-readable.
+- Support iterative, exploratory, and branchable analysis flows.
+- Treat context as curated input, not an unbounded dump.
+- Preserve evidence, contradictions, failures, and lineage instead of flattening them.
+- Make every decision auditable through state, checkpoints, and trace records.
+- Enforce controlled execution with safe, sandboxed tool use.
 
-## Active design map
-- `.github/copilot-instructions.md` defines the high-level product identity, operating model, and precedence over detailed design.
-- `design/system-design.md` defines the detailed product identity, scope, users, and operating model.
-- `design/architecture.md` defines the detailed layered system architecture and major services.
-- `design/ux-flows.md` defines the detailed KMI and Infopedia interaction model and user flows.
-- `design/acceptance-criteria.md` defines the detailed governance, validation gates, and policy enforcement.
+## Key Components
 
-## `design/`
-1. Keep the four files complementary and aligned to their owned concerns.
-2. Keep them as plain markdown without prefix-numbered IDs in the content.
-3. Keep them aligned to `.github/copilot-instructions.md`.
-4. If any of the four canonical design files are missing on a new project or first pass, create them before broadening the design layer.
+### Orchestration
 
-## `src/`
-1. Implement from design, then update `src/docs/` when behavior changes.
-2. Scaffold from design if `src/` is empty on the first implementation pass.
-3. Use `.github/tech-stack.md` as the local reference for the intended backend, frontend, and test stack when updating `src/`.
+LangGraph is the control layer. It owns run state, stage transitions, branching, loop-back, retry logic, checkpointing, escalation, and termination decisions. The orchestrator is the control brain for the run.
 
-## `tests/`
-1. Prove acceptance criteria and cover happy paths, edge cases, and failures.
-2. Scaffold from design if `tests/` is empty on the first test pass.
+### Agents
 
-## `dev_log/`
-1. Record real changes and validation evidence through the workflow prompts.
-2. Keep entries numbered with prefix IDs.
+Agents are modular reasoning components with strict input and output contracts. They handle intake structuring, business context, data context, context curation, hypothesis generation, hypothesis prioritization, analysis planning, code generation, code review, execution interpretation, pattern or driver analysis, insight generation, recommendation, critic behavior, and insight validation.
 
-## `dev_workflow/`
-1. Use these prompts to make design, code, test, and log updates in order.
-2. Treat the prompts as the controlled iteration sequence.
+Agents do not control flow and do not execute tools directly.
 
-## `skills/`
-1. Open `SKILL.md` first and use the minimal matching skill.
-2. Only use a skill when the task clearly matches its scope.
+### Context and Memory
 
-## Working loop
-1. Read `intent/` first.
-2. Reconcile into `plan/`.
-3. Update `.github/copilot-instructions.md` before detailed design when high-level behavior changes.
-4. Update `design/` before `src/` when detailed behavior changes.
-5. Update `tests/` to match acceptance criteria.
-6. Record what changed in `dev_log/`.
-7. Check alignment across intent, plan, context, design, tests, and code.
-8. Validate the change with an explicit check before finishing.
-9. Keep edits inside the scoped files unless a dependency is required in the same pass.
+ABA uses a stage-aware context pack for each run. Context includes business context, data context, prior outputs, reusable memory, and versioned artifacts. The context layer supports selection, prioritization, reuse, and traceability while preventing context overload and noise propagation.
 
-## Conflict rule
-- If this file and `AGENTS.md` disagree, follow `AGENTS.md`.
+### Execution Layer
+
+The execution layer handles SQL, Python, and SAS under governed, sandboxed runtime conditions. It exposes execution through structured requests and returns normalized results with logs, artifacts, and metadata. Tool selection is controlled by policy and runtime constraints.
+
+### Validation and Governance
+
+Validation is mandatory at every major stage. Governance applies runtime policy checkpoints, confidence checks, contradiction handling, escalation triggers, and human-in-the-loop gates. Failed validation must block progression, revise the path, retry within policy, or escalate.
+
+### Observability and Traceability
+
+ABA must capture run-level traces, agent-level logs, stage transitions, intermediate artifacts, decision rationale, retry and failure history, and lineage from intake to insight. Observability data must be structured and queryable so runs can be replayed and debugged.
+
+## Design Philosophy
+
+- Agentic, not prompt-driven.
+- Controlled, not free-form.
+- Structured, not narrative-first.
+- Governed, not autonomous.
+- Traceable, not black-box.
+- Repeatable across runs when inputs, policies, and data conditions are equivalent.
+
+## Development Expectations For Codex
+
+- Start from `intent/` and keep design aligned to it.
+- Use a design-first workflow before implementation.
+- Respect stage boundaries, contracts, and control-flow ownership.
+- Update the correct layer for the change: design before code, tests to prove acceptance, and logs when reality changes.
+- Do not invent behavior that is not represented in intent or approved design.
+- Keep implementation and validation aligned with the controlled ABA operating model.
+
+## Drift Prevention Rules
+
+- Treat `intent/product-intent.md` as the source of truth for product behavior.
+- Do not introduce capabilities, stages, agents, outputs, or technologies that are not supported by intent or the approved design layers.
+- Keep `design/system-design.md`, `design/architecture.md`, `design/ux-flows.md`, and `design/acceptance-criteria.md` aligned with intent and with each other.
+- If a change affects behavior, update design before implementation and keep tests and documentation aligned in the same pass.
+- If a change would create product drift, stop and reconcile it against intent rather than normalizing the drift in code or design.
+- Use the repository stack and workflow only to support the ABA operating model, not to redefine it.

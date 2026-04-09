@@ -21,6 +21,7 @@ The system exists to produce repeatable analytical outcomes that are machine-rea
 
 ABA is in scope for:
 
+- structured intake of multi-part business problems and attached context artifacts
 - problem structuring for open-ended business questions
 - context assembly from business, data, and historical memory
 - stage-level validation and policy enforcement
@@ -54,6 +55,8 @@ ABA is out of scope for:
 # 2. Operating Model
 
 ## 2.1 Core Layers
+
+The runtime maps to seven implementation components: input and interface, orchestration, agents, context and memory, execution and tools, validation and governance, and observability and traceability. The detailed ownership boundaries for those components are defined in `design/architecture.md`.
 
 ### Reasoning layer
 
@@ -103,7 +106,7 @@ The observability layer makes every run inspectable and replayable. It:
 - records run-level traces
 - captures agent-level logs and stage transitions
 - stores validation, governance, retry, and failure records
-- preserves lineage from problem to insight
+- preserves lineage from intake to insight
 - exposes queryable records for debugging, replay, and audit
 
 The observability layer is supporting infrastructure. It does not change decisions, but it must retain enough detail to explain them.
@@ -136,13 +139,33 @@ Every run may emit one or more of the following machine-readable outputs:
 
 No output type is free-form by default. Natural language may appear in bounded summary fields, but the primary interface is structured.
 
+## 2.4 Analyst Interaction Model
+
+ABA exposes an analyst workspace as its primary user-facing operating surface. The workspace must:
+
+- represent the lifecycle as explicit stages
+- show intermediate stage outputs and validation state
+- expose active context and evidence visibility
+- support drill-down from outputs back to upstream artifacts
+- support explicit human intervention at governed checkpoints
+- avoid chat as the primary control metaphor
+
+User control is bounded to:
+
+- intake correction and clarification
+- context review and refinement
+- hypothesis selection or injection
+- plan approval or override within policy
+- insight approval, rejection, or revision request
+- analysis depth override where configuration permits
+
 # 3. LangGraph Orchestration Model
 
 ## 3.1 Lifecycle Nodes
 
 The lifecycle is modeled as a LangGraph graph with the following primary nodes:
 
-1. problem
+1. intake
 2. context
 3. hypothesis
 4. plan
@@ -158,7 +181,8 @@ All nodes read from and write to a single shared run state object. The state obj
 Minimum state categories:
 
 - run identity: `run_id`, `version`, `timestamps`, `owner`, `status`
-- problem framing: business objective, analytical question, constraints, scope, assumptions, known unknowns
+- intake payload: raw problem payload, normalized problem payload, attachments, question priority, audience or role settings
+- intake framing: business objective, analytical question, constraints, scope, assumptions, known unknowns
 - context pack: business context, data context, prior artifacts, policy context, stage-specific working set
 - hypothesis set: hypotheses, lineage, scores, status, supporting and opposing evidence, selection rationale
 - plan set: candidate analyses, required tools, expected outputs, feasibility, validation expectations
@@ -173,21 +197,22 @@ The state object must be versioned. Each major node transition records a checkpo
 
 ## 3.3 Node Entry and Exit Conditions
 
-### Problem node
+### Intake node
 
 Purpose:
 
-- normalize the user problem into a machine-readable analysis frame
+- normalize the user intake into a machine-readable analysis frame
 
 Entry conditions:
 
-- raw problem statement or problem payload is available
+- raw intake statement or problem payload is available
 - run is not already in a terminal state
 
 Exit conditions:
 
-- problem statement is validated or marked ambiguous
+- intake is validated or marked ambiguous
 - scope, business objective, constraints, and assumptions are extracted
+- multiple analytical questions are normalized and prioritized when present
 - unresolved ambiguity is either routed to clarification, paused for HITL, or carried forward explicitly with risk markers
 
 ### Context node
@@ -198,7 +223,7 @@ Purpose:
 
 Entry conditions:
 
-- problem framing is valid enough to support context retrieval
+- intake framing is valid enough to support context retrieval
 
 Exit conditions:
 
@@ -290,7 +315,7 @@ The graph is not strictly linear. It must support:
 
 Typical transition paths:
 
-- `problem -> context`
+- `intake -> context`
 - `context -> hypothesis`
 - `hypothesis -> plan`
 - `plan -> execution`
@@ -353,7 +378,7 @@ Stage validation requirements:
 
 | Stage | Validation focus | Minimum criteria | Output effect |
 |---|---|---|---|
-| problem | input completeness and clarity | objective present, analytical question present, constraints captured, ambiguity classified | pass to context, retry clarification, or escalate to HITL |
+| intake | input completeness and clarity | objective present, analytical question present, constraints captured, ambiguity classified | pass to context, retry clarification, or escalate to HITL |
 | context | relevance and sufficiency | retrieved context linked to problem, stale context pruned, required business and data context present | pass to hypothesis, revise retrieval, or escalate for missing context |
 | hypothesis | logic and testability | hypothesis falsifiable, grounded in context, non-duplicative, test path available | pass to plan, prune, retry generation, or escalate if no viable branch exists |
 | plan | correctness and feasibility | plan aligns to active hypothesis, required data exists, tool choice valid, expected outputs defined | pass to execution, revise plan, or block unsafe or infeasible plans |
@@ -374,6 +399,15 @@ Governance is embedded in node execution, not applied after the fact. Every majo
 5. transition decision logging
 
 No node may write a successful exit state until these runtime checks complete.
+
+## 3.8 Audience and Configuration Adaptation
+
+ABA may adapt presentation depth, hypothesis style, analysis templates, and verbosity according to configured role, domain, and user preference settings, provided that:
+
+- adaptation is configuration-driven and traceable
+- adaptation does not alter governance rules or evidence requirements
+- adaptation does not hide uncertainty, contradiction, or low confidence
+- adaptation remains bounded by the active run contract and policy
 
 # 4. Agent Design
 
@@ -396,16 +430,20 @@ Agents may propose next actions, but the control layer decides whether the graph
 
 | Agent | Responsibility | Input | Output |
 |---|---|---|---|
-| Problem Structuring Agent | Convert the incoming problem into an explicit analytical frame | raw problem payload, constraints, user objective | normalized problem frame, ambiguity flags, scope boundaries |
+| Intake Structuring Agent | Convert the incoming intake into an explicit analytical frame | raw problem payload, constraints, user objective | normalized problem frame, ambiguity flags, scope boundaries |
+| Business Context Agent | Extract and structure business context relevant to the problem | problem frame, business artifacts, prior business memory | business context slice, terminology map, relevance annotations |
+| Data Context Agent | Extract and structure data context for analysis feasibility | problem frame, dataset metadata, schema references | data context slice, schema understanding, data quality risks |
 | Context Curation Agent | Select and prune relevant business, data, and memory context | problem frame, context candidates, stage policy | versioned context pack, pruning decisions, retrieval trace |
 | Hypothesis Generation Agent | Produce candidate hypotheses from the context pack | problem frame, context pack, prior hypotheses | hypothesis list with lineage, rationale, and confidence |
 | Hypothesis Prioritization Agent | Rank, merge, and prune hypotheses | hypothesis list, evidence signals, cost signals | ordered hypothesis set, pruning decisions, active set |
 | Analysis Planning Agent | Convert hypotheses into executable analytical plans | active hypotheses, data constraints, tool policy | structured plan, execution requirements, validation checks |
 | Code Synthesis Agent | Produce tool-ready SQL, Python, or SAS request payloads | analysis plan, schema context, execution constraints | structured execution request objects |
 | Execution Interpretation Agent | Normalize execution outputs into evidence and result objects | execution result bundle, plan refs, hypothesis refs | evidence map, result summary, failure classification |
+| Pattern and Driver Analysis Agent | Explore root-cause, segment, or driver patterns from results | execution result bundle, evidence map, active hypotheses | driver analysis objects, comparative findings, refinement signals |
 | Critic Agent | Challenge weak assumptions and conflicting outputs | problem frame, hypotheses, plans, results | critique object, contradiction flags, revision requests |
 | Insight Generation Agent | Produce bounded insights from validated evidence | evidence map, results, active hypotheses | insight pack, confidence scores, recommendation candidates |
 | Recommendation Agent | Convert insights into action-oriented next steps | insight pack, business objective, constraints | recommendation pack, follow-up actions, escalation flags |
+| Insight Validation Agent | Validate that insights and recommendations are evidence-backed and release-ready | insight pack, recommendation pack, evidence map | validation outcome, release flags, evidence sufficiency result |
 
 ## 4.3 Agent Output Schema Discipline
 
@@ -453,7 +491,26 @@ The execution layer exposes a tool abstraction for:
 
 Each tool implementation is wrapped in a normalized interface so the orchestrator receives consistent request and response shapes regardless of language.
 
-## 5.2 Execution Request Contract
+## 5.2 Tool Registry and Selection Policy
+
+The execution layer must maintain a governed tool registry. Each registered tool must declare:
+
+- tool type
+- supported task categories
+- supported input and output contracts
+- runtime version targets
+- safety constraints
+- fallback eligibility
+- dry-run capability
+- reliability and performance metadata
+
+Tool selection must:
+
+- use task fit, policy compatibility, data-access constraints, and runtime availability
+- reject inappropriate tools rather than coerce execution through an invalid path
+- preserve the selected tool and rejected alternatives in the run trace when choice matters
+
+## 5.3 Execution Request Contract
 
 An execution request must contain:
 
@@ -469,7 +526,7 @@ An execution request must contain:
 
 Execution requests are structured objects, not code strings alone.
 
-## 5.3 Sandboxed Execution
+## 5.4 Sandboxed Execution
 
 All execution runs in a sandboxed environment. The sandbox must:
 
@@ -481,7 +538,7 @@ All execution runs in a sandboxed environment. The sandbox must:
 
 If a request is unsafe or outside policy, the execution layer must reject it with a structured failure response.
 
-## 5.4 Result Capture
+## 5.5 Result Capture
 
 Execution results must capture:
 
@@ -497,7 +554,7 @@ Execution results must capture:
 
 The execution layer returns normalized results only. It does not interpret business meaning.
 
-## 5.5 Failure Normalization
+## 5.6 Failure Normalization
 
 Execution failure must be normalized into deterministic categories such as:
 
@@ -511,7 +568,7 @@ Execution failure must be normalized into deterministic categories such as:
 
 Each category maps to a known retry, rollback, or escalation path in the control layer.
 
-## 5.6 Code and Result Validation
+## 5.7 Code and Result Validation
 
 Execution is governed by two distinct validation steps:
 
@@ -535,6 +592,33 @@ Result validation must verify:
 - propagation of data quality signals into downstream state
 
 Neither validation may be bypassed by retry logic.
+
+## 5.8 Dry-Run and Fallback Behavior
+
+The execution layer must support dry-run behavior when policy, tool type, or risk level requires preflight validation. A dry-run must:
+
+- validate contract shape and runtime readiness
+- verify data-access compatibility where possible
+- avoid unsafe side effects
+- produce a structured preview result
+
+Fallback execution is allowed only when:
+
+- the primary tool path fails in a retriable or fallback-eligible way
+- the fallback remains policy-compliant
+- the fallback decision is recorded in the trace and decision history
+
+## 5.9 Data Quality Propagation
+
+The execution layer must surface data quality signals into downstream state, including:
+
+- missing or incomplete data
+- inconsistent or conflicting data
+- stale data
+- schema mismatches
+- null, outlier, and anomaly conditions
+
+These signals must influence validation, confidence, and release decisions rather than remain isolated execution diagnostics.
 
 # 6. Multi-Hypothesis System
 
@@ -638,7 +722,7 @@ The context pack is curated, not accumulated by default.
 
 Context selection is stage-aware:
 
-- problem stage uses broad framing and explicit constraints
+- intake stage uses broad framing and explicit constraints
 - context stage uses business and data context needed to ground exploration
 - hypothesis stage uses the smallest context needed to generate and compare options
 - plan stage uses schema, tool, and validation context
@@ -670,6 +754,13 @@ Reusable memory stores artifacts that may help future runs:
 - prior evidence bundles
 
 Cross-run memory is reusable only when it remains compatible with the new run's context, version, and governance policy.
+
+Reusable memory must never be imported silently. Retrieval must record:
+
+- why the memory item was selected
+- which run or source produced it
+- what compatibility checks were applied
+- whether the item remained provisional or was validated in the new run
 
 ## 7.5 Retrieval, Pruning, and Versioning Rules
 
@@ -801,6 +892,13 @@ ABA must behave deterministically for the following conditions:
 - record the conflict in state
 - block convergence until the conflict is resolved, scoped, or escalated
 
+### Partial completion
+
+- preserve successful artifacts from completed sub-steps
+- mark incomplete branches explicitly
+- prevent partial outputs from being treated as final validated conclusions
+- provide a bounded degraded state with actionable next steps when full completion is not possible
+
 ## 9.2 Failure Escalation
 
 The system must escalate when:
@@ -836,7 +934,7 @@ No stage may bypass governance. If a policy checkpoint blocks progress, the orch
 
 Minimum policy checkpoints exist at:
 
-- problem exit
+- intake exit
 - context exit
 - hypothesis selection
 - plan approval for execution
@@ -862,7 +960,7 @@ Escalation triggers include:
 - high analytical or operational risk
 - policy breach
 - repeated retry exhaustion
-- ambiguous problem framing
+- ambiguous intake framing
 - insufficient context
 - unexplained anomalous results
 - low-quality or weakly supported insight generation
@@ -876,13 +974,13 @@ The system must pause at explicit HITL checkpoints where a user can:
 - approve
 - reject
 - override within allowed policy scope
-- inject additional problem or context inputs
+- inject additional intake or context inputs
 - add or select hypotheses
 - modify or replace a plan
 
 Minimum HITL checkpoints:
 
-- ambiguous or incomplete problem intake
+- ambiguous or incomplete intake
 - insufficient or conflicting context
 - no viable hypothesis after pruning
 - high-risk or low-confidence plan
@@ -970,7 +1068,7 @@ Each agent invocation must emit logs containing:
 
 The system must preserve lineage across:
 
-- problem -> context
+- intake -> context
 - context -> hypothesis
 - hypothesis -> plan
 - plan -> execution request
@@ -997,6 +1095,14 @@ The system must support replay of:
 - a failed execution path
 
 Replay must use checkpointed state, versioned context, tool metadata, and decision records so debugging does not depend on hidden memory.
+
+Debugging visibility must support inspection of:
+
+- failed stage entry and exit state
+- validation and governance outcomes
+- agent inputs, outputs, and confidence
+- execution requests, logs, and artifacts
+- retry, fallback, rollback, and HITL events
 
 ## 11.6 Decision Transparency
 
@@ -1037,6 +1143,25 @@ ABA should compare run outputs against analyst baselines when available. Compari
 - relative confidence calibration
 
 Baseline comparison is used for evaluation and improvement tracking, not as an automatic override of runtime decisions.
+
+## 12.3 Benchmark and Continuous Evaluation
+
+The system must support benchmark use cases that exercise the end-to-end lifecycle. Benchmark evaluation must:
+
+- use representative business analytics scenarios
+- preserve comparable scoring outputs across iterations
+- capture failure modes and root causes
+- support improvement tracking over time
+
+## 12.4 Readiness and Auditability
+
+Readiness for a production-quality milestone requires:
+
+- successful end-to-end execution on representative scenarios
+- repeatable run behavior under equivalent conditions
+- complete validation and governance coverage across stages
+- replayable traces and inspectable decision history
+- audit records sufficient to explain approvals, failures, retries, branches, and final outputs
 
 ## 12.3 Improvement Tracking
 
@@ -1098,6 +1223,6 @@ The system is designed to stop cleanly when the evidence is insufficient, the br
 
 # 14. Section Summary
 
-ABA is a controlled agentic analytics execution system built on LangGraph orchestration. The system separates reasoning, control, execution, and observability. It models analytics as a lifecycle of problem, context, hypothesis, plan, execution, and insight. It supports end-to-end validation, embedded runtime governance, explicit HITL gates, sandboxed execution, decision transparency, traceable lineage, replayable observability, output quality scoring, and enterprise-grade auditability.
+ABA is a controlled agentic analytics execution system built on LangGraph orchestration. The system separates reasoning, control, execution, and observability. It models analytics as a lifecycle of intake, context, hypothesis, plan, execution, and insight. It supports end-to-end validation, embedded runtime governance, explicit HITL gates, sandboxed execution, decision transparency, traceable lineage, replayable observability, output quality scoring, and enterprise-grade auditability.
 
 The design objective is controlled analytical execution with strict contracts, structured validation, enforceable governance, queryable traces, and repeatable behavior.

@@ -1,0 +1,2 @@
+"""Intake structuring agent package."""
+
