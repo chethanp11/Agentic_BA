@@ -4,6 +4,11 @@
 
 Repair implementation defects identified by review or validation.
 
+## Skills to use
+
+- [$debugging-fix-loops](/Users/chethan/GitHub/Agentic_BA/.github/skills/debugging-fix-loops/SKILL.md)
+- [$coding-implementation](/Users/chethan/GitHub/Agentic_BA/.github/skills/coding-implementation/SKILL.md)
+
 ## Read
 
 - fix target notes
@@ -24,4 +29,3 @@ Repair implementation defects identified by review or validation.
 
 - keep the fix narrow
 - do not change requirements to avoid a defect
-

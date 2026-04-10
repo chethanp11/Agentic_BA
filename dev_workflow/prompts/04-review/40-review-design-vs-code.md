@@ -4,6 +4,11 @@
 
 Compare the changed code and docs to the active design before validation.
 
+## Skills to use
+
+- [$review-quality-control](/Users/chethan/GitHub/Agentic_BA/.github/skills/review-quality-control/SKILL.md)
+- [$design-architecture](/Users/chethan/GitHub/Agentic_BA/.github/skills/design-architecture/SKILL.md)
+
 ## Read
 
 - relevant `design/` files
@@ -24,4 +29,3 @@ Compare the changed code and docs to the active design before validation.
 
 - call out issues directly
 - do not treat review as a formality
-

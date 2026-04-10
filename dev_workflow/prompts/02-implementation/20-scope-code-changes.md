@@ -4,6 +4,12 @@
 
 Define the smallest safe implementation scope for the current iteration.
 
+## Skills to use
+
+- [$design-architecture](/Users/chethan/GitHub/Agentic_BA/.github/skills/design-architecture/SKILL.md)
+- [$coding-implementation](/Users/chethan/GitHub/Agentic_BA/.github/skills/coding-implementation/SKILL.md)
+- [$orchestrator-engineering](/Users/chethan/GitHub/Agentic_BA/.github/skills/orchestrator-engineering/SKILL.md)
+
 ## Read
 
 - `plan/code-update.md`
@@ -24,4 +30,3 @@ Define the smallest safe implementation scope for the current iteration.
 
 - do not widen the scope beyond the plan
 - do not start coding without a stable target
-

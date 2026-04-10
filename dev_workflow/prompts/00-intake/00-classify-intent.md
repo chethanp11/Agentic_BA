@@ -4,6 +4,12 @@
 
 Turn the latest human request into a clear change theme without mutating any repository artifact.
 
+## Skills to use
+
+- [$core-system-thinking](/Users/chethan/GitHub/Agentic_BA/.github/skills/core-system-thinking/SKILL.md)
+- [$prompt-engineering-advanced](/Users/chethan/GitHub/Agentic_BA/.github/skills/prompt-engineering-advanced/SKILL.md)
+- [$governance-discipline](/Users/chethan/GitHub/Agentic_BA/.github/skills/governance-discipline/SKILL.md)
+
 ## Read
 
 - `AGENTS.md`
@@ -27,4 +33,3 @@ Turn the latest human request into a clear change theme without mutating any rep
 - do not guess unstated scope
 - do not alter intent text
 - do not skip unresolved ambiguity
-

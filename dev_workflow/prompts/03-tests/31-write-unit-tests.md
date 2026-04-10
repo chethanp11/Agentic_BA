@@ -4,6 +4,11 @@
 
 Add tests that prove the changed behavior.
 
+## Skills to use
+
+- [$testing-validation](/Users/chethan/GitHub/Agentic_BA/.github/skills/testing-validation/SKILL.md)
+- [$review-quality-control](/Users/chethan/GitHub/Agentic_BA/.github/skills/review-quality-control/SKILL.md)
+
 ## Read
 
 - `plan/test-update.md`
@@ -24,4 +29,3 @@ Add tests that prove the changed behavior.
 
 - test the intended behavior, not just the current implementation
 - cover success and failure paths when relevant
-

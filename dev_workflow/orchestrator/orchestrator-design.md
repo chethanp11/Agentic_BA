@@ -12,8 +12,8 @@ The orchestrator is the control layer that decides which workflow node runs next
 
 ## First-pass orchestration path
 
-1. `intent-toplan.md`
-2. `00-plan-todesign.md`
+1. `prompts/00-intake/00-classify-intent.md`
+2. `prompts/00-intake/03-build-iteration-plan.md`
 3. implementation, tests, review, validation, fix, closeout as needed
 
 ## Orchestration rules
@@ -21,4 +21,3 @@ The orchestrator is the control layer that decides which workflow node runs next
 - Only one active workflow node should own the next mutation.
 - The orchestrator should prefer the smallest next step that advances the state.
 - If a node cannot complete safely, the orchestrator should route to `BLOCKED`.
-

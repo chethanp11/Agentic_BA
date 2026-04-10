@@ -4,6 +4,11 @@
 
 Record the final state of the iteration and the next starting point.
 
+## Skills to use
+
+- [$artifact-data-management](/Users/chethan/GitHub/Agentic_BA/.github/skills/artifact-data-management/SKILL.md)
+- [$meta-continuous-improvement](/Users/chethan/GitHub/Agentic_BA/.github/skills/meta-continuous-improvement/SKILL.md)
+
 ## Read
 
 - current plan files
@@ -26,4 +31,3 @@ Record the final state of the iteration and the next starting point.
 
 - do not overstate completion
 - keep the handoff concise and factual
-

@@ -16,3 +16,5 @@ Record meaningful code changes that were actually implemented.
 
 ## Entries
 - `DEV-006` | `2026-04-09` | `no code changes` | This iteration only added the workflow scaffold under `dev_workflow/`; no `src/` implementation changes were required. | The requested work was limited to workflow structure and control docs. | `DEV-006` | `AGENTS.md`, `.github/copilot-instructions.md`
+- `DEV-007` | `2026-04-10` | `no code changes` | This iteration only refined `dev_workflow/` structure; no `src/` implementation changes were required. | The requested work was limited to workflow file layout and reference cleanup. | `DEV-007` | `AGENTS.md`, `.github/copilot-instructions.md`
+- `DEV-008` | `2026-04-10` | `no code changes` | This iteration only changed `.github/skills/` and `dev_workflow/` prompt references; no `src/` implementation changes were required. | The requested work was limited to workflow skill compatibility. | `DEV-008` | `AGENTS.md`, `.github/copilot-instructions.md`

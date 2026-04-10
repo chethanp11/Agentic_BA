@@ -12,14 +12,14 @@
 
 ## Operating model
 
-The workflow runs as a sequence of small prompt nodes.
+The workflow runs as a sequence of small prompt nodes under `prompts/`.
 
-1. Intake turns human intent into a plan.
-2. Design updates translate that plan into canonical design artifacts.
-3. Implementation applies only the scoped change.
-4. Tests and validation prove the change.
-5. Review and fix-loop steps repair drift or defects.
-6. Closeout records the final state and next starting point.
+1. Intake prompts turn human intent into a plan.
+2. Design prompts translate that plan into canonical design artifacts.
+3. Implementation prompts apply only the scoped change.
+4. Tests and validation prompts prove the change.
+5. Review and fix-loop prompts repair drift or defects.
+6. Closeout prompts record the final state and next starting point.
 
 ## Control rules
 
@@ -41,4 +41,3 @@ The workflow files should be readable by a lightweight script or future LangGrap
 - exit conditions
 - failure conditions
 - next nodes
-

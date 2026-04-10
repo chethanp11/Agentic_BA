@@ -4,6 +4,11 @@
 
 Classify the failure and route it to the correct repair layer.
 
+## Skills to use
+
+- [$debugging-fix-loops](/Users/chethan/GitHub/Agentic_BA/.github/skills/debugging-fix-loops/SKILL.md)
+- [$governance-discipline](/Users/chethan/GitHub/Agentic_BA/.github/skills/governance-discipline/SKILL.md)
+
 ## Read
 
 - validation evidence
@@ -26,4 +31,3 @@ Classify the failure and route it to the correct repair layer.
 - fix code issues in code
 - fix test issues in tests
 - note environment issues separately
-

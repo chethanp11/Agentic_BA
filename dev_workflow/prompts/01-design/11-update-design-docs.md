@@ -4,6 +4,11 @@
 
 Apply the approved design changes and capture the decision in the design log.
 
+## Skills to use
+
+- [$design-architecture](/Users/chethan/GitHub/Agentic_BA/.github/skills/design-architecture/SKILL.md)
+- [$artifact-data-management](/Users/chethan/GitHub/Agentic_BA/.github/skills/artifact-data-management/SKILL.md)
+
 ## Read
 
 - `plan/design-update.md`
@@ -27,4 +32,3 @@ Apply the approved design changes and capture the decision in the design log.
 
 - keep the design aligned with the plan
 - do not encode implementation details into the design
-

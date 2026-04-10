@@ -4,6 +4,10 @@
 
 Record the actual validation evidence in the permanent log.
 
+## Skills to use
+
+- [$artifact-data-management](/Users/chethan/GitHub/Agentic_BA/.github/skills/artifact-data-management/SKILL.md)
+
 ## Read
 
 - validation output
@@ -23,4 +27,3 @@ Record the actual validation evidence in the permanent log.
 
 - do not invent evidence
 - keep the record factual and specific
-

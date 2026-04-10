@@ -4,6 +4,12 @@
 
 Map the plan into concrete design file changes.
 
+## Skills to use
+
+- [$design-architecture](/Users/chethan/GitHub/Agentic_BA/.github/skills/design-architecture/SKILL.md)
+- [$core-system-thinking](/Users/chethan/GitHub/Agentic_BA/.github/skills/core-system-thinking/SKILL.md)
+- [$governance-discipline](/Users/chethan/GitHub/Agentic_BA/.github/skills/governance-discipline/SKILL.md)
+
 ## Read
 
 - `plan/design-update.md`
@@ -25,4 +31,3 @@ Map the plan into concrete design file changes.
 
 - update the right design file only
 - do not spread the same content across every design file
-
