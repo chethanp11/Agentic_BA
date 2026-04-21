@@ -1,23 +1,37 @@
 # Project Agents Guide
 
 ## Purpose
-Provide repo-level rules for Codex and other AI collaborators working on Agentic Business Analytics (ABA) development.
+Provide repo-level rules for Codex and other AI collaborators working on AI application development.
 
 ## Project framing
-This repository supports development of an agentic system through design-first workflows and LangGraph-driven agent orchestration. Agents are capable of taking actions and making decisions. It is not a generic application template or prompt-only workflow; implementation decisions are driven from intent, design, tests, and validation. Codex (VS Code) is the primary development engine for implementation. ChatGPT and Copilot are used only for design thinking, planning, and workflow structuring.
+This repository supports development of an agentic system through design-first workflows and LangGraph-driven agent orchestration. Agents are capable of taking actions and making decisions. It is not a generic application template or prompt-only workflow; implementation decisions are driven from intent, design, tests, and validation. The active AI environment may be GitHub, Claude, or Codex, but the repo contract remains the same across environments.
+
+## Environment contract
+- `AGENTS.md` is always read first in every environment.
+- `.env` selects the active environment through `AI_ENV=github`, `AI_ENV=claude`, or `AI_ENV=codex`.
+- After reading `AGENTS.md`, read the environment-specific context files for the active `AI_ENV`.
+- If `AI_ENV` is missing, fall back to the environment-specific files that match the runtime the agent is operating in. If that is still ambiguous, ask before editing.
+
+### Environment file mapping
+1. `AI_ENV=github`
+   Read `.github/copilot-instructions.md` and `.github/tech-stack.md`.
+2. `AI_ENV=claude`
+   Read `CLAUDE.md`, `.claude/project-memory.md`, and `.claude/tech-stack.md`.
+3. `AI_ENV=codex`
+   Read `.codex/project-context.md` and `.codex/tech-stack.md`.
 
 ## Always-update contract
-- When the user gives a new prompt that changes workflow, precedence, ownership, or operating rules, update `AGENTS.md` and `.github/copilot-instructions.md` first.
-- Treat those two files as the always-current top-level contract for the repo.
+- When the user gives a new prompt that changes workflow, precedence, ownership, or operating rules, update `AGENTS.md` and the active environment context files first.
+- Treat `AGENTS.md` plus the active environment context files as the always-current top-level contract for the repo.
 - Then propagate any resulting rule changes into design, tests, logs, or workflow files as needed.
 
 ## Contract roles
 1. `AGENTS.md` is the authoritative repo contract. It defines durable policy, precedence, file ownership, traceability rules, and the structure that every other artifact must follow.
-2. `.github/copilot-instructions.md` is the compact high-level design source and working context.
-3. If `AGENTS.md` and `.github/copilot-instructions.md` overlap, keep the durable policy in `AGENTS.md` and the current high-level design summary in `.github/copilot-instructions.md`.
-4. If `.github/copilot-instructions.md` and `design/*` disagree, `.github/copilot-instructions.md` wins for high-level design intent until it is updated.
-5. Always read both files before starting any task.
-6. Reread both files at the start of every new task, and also whenever a prompt changes workflow, precedence, ownership, or operating rules.
+2. The active environment context files are the compact high-level design source and working context for that environment.
+3. If `AGENTS.md` and the active environment context files overlap, keep the durable policy in `AGENTS.md` and the current high-level design summary in the environment-specific context files.
+4. If the active environment context files and `design/*` disagree, the active environment context files win for high-level design intent until they are updated.
+5. Always read `AGENTS.md` plus the active environment context files before starting any task.
+6. Reread `AGENTS.md` plus the active environment context files at the start of every new task, and also whenever a prompt changes workflow, precedence, ownership, or operating rules.
 
 ## Repo Shape
 - `intent/` holds requirements and feedback inputs.
@@ -28,7 +42,7 @@ This repository supports development of an agentic system through design-first w
 - `dev_log/` is the permanent execution record.
 - `dev_workflow/` contains the prompts and runbooks that drive the loop.
 - `skills/` contains reusable scoped procedures.
-- `.github/` contains local context and command references only.
+- `.github/` or `.claude/` or `.codex/` contains local context and command references only.
 
 ## Boundary rules
 1. If a request is ambiguous about scope, file targets, validation, or ownership, stop and ask before editing.
@@ -39,13 +53,13 @@ This repository supports development of an agentic system through design-first w
 1. `intent/` is the starting point of requirements.
 2. `intent/product-intent.md` and `intent/feedback.md` are the only human-edited operational inputs for the workflow.
 3. `intent/gaps.md` is a system-edited operational input that is updated by a prompt after reviewing `dev_log/*`.
-4. `.github/copilot-instructions.md` is the high-level design source of truth above `design/*`.
-5. `design/` is the detailed design layer that must align to `.github/copilot-instructions.md`.
+4. The active environment context files are the high-level design source of truth above `design/*`.
+5. `design/` is the detailed design layer that must align to the active environment context files.
 6. `plan/` is the temporary working area for the current iteration only.
 7. `dev_log/` is the permanent archive of what was actually updated and validated.
 8. `src/` is the implementation space, and `tests/` is the validation space.
 9. A new iteration starts only after `intent/` or `feedback.md` is updated manually, or after validation surfaces gaps that are recorded back into `intent/`.
-10. Codex executes the design → plan → code → test → validate → fix loop end-to-end. ChatGPT and Copilot are used only for structuring intent, refining design, and improving workflow.
+10. The active implementation agent executes the design → plan → code → test → validate → fix loop end-to-end. Other assistants are used only for structuring intent, refining design, and improving workflow.
 
 ## Folder contracts
 ### `intent/`
@@ -64,7 +78,7 @@ This repository supports development of an agentic system through design-first w
 
 ### `design/`
 1. Files that belong here are `system-design.md`, `architecture.md`, `ux-flows.md`, and `acceptance-criteria.md`.
-2. Create or revise these files when approved intent, plan work, or `.github/copilot-instructions.md` changes agentic system behavior, LangGraph orchestration, agent workflows, or correctness rules.
+2. Create or revise these files when approved intent, plan work, or the active environment context files change agentic system behavior, LangGraph orchestration, agent workflows, or correctness rules.
 3. Use this folder for the detailed design layer. Keep each file focused on its owned concern and keep the set complementary.
 4. Explicit file ownership:
    - `system-design.md` documents agentic behavior, lifecycle, states, validations, runtime expectations, and lifecycle flow.
@@ -85,7 +99,7 @@ This repository supports development of an agentic system through design-first w
 4. These files are plain implementation artifacts and do not use prefix IDs as primary numbering.
 5. Do not store design drafts, plan notes, or code that diverges from the current design without an approved update.
 6. `REQ-*`, `DEV-*`, and `TEST-*` are used in comments only
-7. Use `.github/tech-stack.md` as the local implementation stack reference for `src/` layout, backend/frontend split, and testing assumptions.
+7. Use the active environment tech-stack file as the local implementation stack reference for `src/` layout, backend/frontend split, and testing assumptions.
 
 ### `tests/`
 1. Files that belong here are traceability notes, test plans, validation assets, and the test suites that prove the design.
@@ -107,7 +121,7 @@ This repository supports development of an agentic system through design-first w
 2. Create or revise these files when the repository workflow itself needs a new or better step, order, or guardrail.
 3. Use this folder to orchestrate updates to design, code, tests, and logs in the correct order.
 4. Do not place direct implementation content, hidden one off procedures, or workflow steps that bypass the contract.
-5. Read `AGENTS.md` and `.github/copilot-instructions.md` first before running these prompts.
+5. Read `AGENTS.md` and the active environment context files first before running these prompts.
 
 ### `skills/`
 1. Files that belong here are skill definitions and supporting instructions for reusable scoped workflows.
@@ -121,8 +135,20 @@ This repository supports development of an agentic system through design-first w
 2. Create or revise these files when local working guidance or command references need to change for the repository.
 3. Use this folder for compact working context that helps copilot operate inside the contract.
 4. Do not replace the top level contract here, store implementation state here, or duplicate the full repo policy.
-5. `.github/copilot-instructions.md` is the compact high-level design source and working context.
-6. `.github/tech-stack.md` records the local implementation stack for `src/` and should stay aligned with `design/architecture.md` and `design/system-design.md`.
+5. `.github/copilot-instructions.md` and `.github/tech-stack.md` are used only when `AI_ENV=github`.
+6. Keep the GitHub-specific files aligned with `design/architecture.md` and `design/system-design.md` when GitHub is the active environment.
+
+### `.claude/`
+1. Files that belong here are Claude-specific project memory, tech stack context, slash commands, and optional Claude agents.
+2. Create or revise these files when Claude-specific working guidance or command workflows need to change for the repository.
+3. Use this folder only when `AI_ENV=claude`.
+4. Do not replace the top level contract here, store implementation state here, or duplicate the full repo policy.
+
+### `.codex/`
+1. Files that belong here are Codex-specific project context, tech stack context, and Codex-native reusable skills.
+2. Create or revise these files when Codex-specific working guidance or scoped reusable procedures need to change for the repository.
+3. Use this folder only when `AI_ENV=codex`.
+4. Do not replace the top level contract here, store implementation state here, or duplicate the full repo policy.
 
 ## Validation rules
 1. Every non-trivial change must end with an explicit validation step such as `git diff --check`, a targeted test, or another relevant check.
@@ -132,7 +158,7 @@ This repository supports development of an agentic system through design-first w
 
 ## Required read order before substantial work
 Read the latest relevant artifacts in this order before modifying more than one file:
-1. `AGENTS.md` and `.github/copilot-instructions.md`
+1. `AGENTS.md` and the active environment context files selected by `AI_ENV`
 2. `intent/product-intent.md`
 3. `intent/feedback.md` or the current active feedback file during migration
 4. `intent/gaps.md` when system-detected gaps exist
@@ -144,21 +170,21 @@ Read the latest relevant artifacts in this order before modifying more than one 
 10. The active `dev_log/` files
 11. Relevant step file from `dev_workflow/`
 
-## Required behavior for Codex
-1. start any task by reading `AGENTS.md` and `.github/copilot-instructions.md`
+## Required behavior
+1. Start any task by reading `AGENTS.md` and the active environment context files selected by `AI_ENV`.
 1. Always read `intent/` before starting a task.
 2. Treat `intent/` as the starting point of every loop and the highest-priority human input.
 3. Do not modify `intent/` unless the user explicitly asks for it.
-4. Translate intent into `plan/*` before coding or rewriting `.github/copilot-instructions.md`, design, code, or tests.
+4. Translate intent into `plan/*` before coding or rewriting the active environment context files, design, code, or tests.
 5. Preserve the detail in `intent/*` when translating into `plan/*`; do not compress away constraints, distinctions, or open questions that affect behavior.
 6. Compare the latest intent against current high-level context, detailed design, code, and tests, then split the needed work into `plan/design-update.md`, `plan/code-update.md`, and `plan/test-update.md`.
 7. Carry unresolved ambiguities into `plan/*` and the relevant downstream artifact instead of silently choosing a direction.
 8. Make the plan explicit about what changed, what was deferred, and which `REQ-*`, `TEST-*`, or `DEV-*` items were created or revised.
 9. Update or add tests and eval mappings whenever behavior, contracts, or acceptance criteria change.
 10. Stay inside the documented version and iteration boundary after intent has been interpreted into plan and context.
-11. Do not invent behavior that is not represented in intent, plan, `.github/copilot-instructions.md`, design, or acceptance artifacts.
+11. Do not invent behavior that is not represented in intent, plan, the active environment context files, design, or acceptance artifacts.
 12. Align implementation with both intent and plan-guided context and design.
-13. Always reflect meaningful intent changes into `plan/*`, `.github/copilot-instructions.md`, `design/*`, `tests/*`, and the active `dev_log/` files.
+13. Always reflect meaningful intent changes into `plan/*`, the active environment context files, `design/*`, `tests/*`, and the active `dev_log/` files.
 14. Update logs when the work changes reality:
    - `dev_log/design-update-log.md` for meaningful design updates
    - `dev_log/code-update-log.md` for meaningful code updates
@@ -178,7 +204,7 @@ Use exactly these categories when classifying issues or feedback:
 
 ## Traceability rules
 1. `intent/*` defines what humans want.
-2. `.github/copilot-instructions.md` defines the high-level design and operating model above the detailed design files.
+2. The active environment context files define the high-level design and operating model above the detailed design files.
 3. `design/ux-flows.md` defines how users experience the system.
 4. `design/system-design.md` defines how the system behaves.
 5. `design/acceptance-criteria.md` defines what correct means.
@@ -209,7 +235,7 @@ For every iteration, review:
 When artifacts disagree, use this precedence:
 1. `intent/*`
 2. `plan/*`
-3. `.github/copilot-instructions.md`
+3. The active environment context files selected by `AI_ENV`
 4. `design/*`
 5. `tests/*`
 6. `src/*`
@@ -223,7 +249,7 @@ If implementation deviates from intent, flag it and log it. Do not silently norm
 ## Editing model
 - Human edits by default: `intent/product-intent.md`, `intent/feedback-intent.md`
 - Human edits occasionally: `AGENTS.md`, `skills/*`
-- System-managed through workflow: `intent/gaps.md`, `plan/*`, `design/*`, `src/*`, `tests/*`, `dev_log/*`, `dev_workflow/*`, and usually `.github/*`
+- System-managed through workflow: `intent/gaps.md`, `plan/*`, `design/*`, `src/*`, `tests/*`, `dev_log/*`, `dev_workflow/*`, and usually the active environment context files
 
 ## Source tree rule
 - `README.md` is the project README for the copied application.
